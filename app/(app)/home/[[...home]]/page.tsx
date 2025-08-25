@@ -133,14 +133,14 @@ export default function Dashboard() {
             <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Upload & Controls */}
               <div className="space-y-4">
-                <div className="bg-white shadow-md rounded-xl p-4">
+                <div className="shadow-md rounded-xl p-4">
                   <h2 className="text-lg font-semibold text-gray-700 mb-3">
                     📤 Upload Image
                   </h2>
                   <input
                     type="file"
                     onChange={handleFileUpload}
-                    className="w-full border border-gray-300 rounded-lg p-2 cursor-pointer hover:border-purple-500 transition text-sm"
+                    className="w-full border border-gray-300 rounded-lg p-2 cursor-pointer hover:border-purple-500 transition text-sm text-black"
                   />
                   {isUploading && (
                     <p className="mt-2 text-purple-600 font-medium text-sm">
@@ -248,7 +248,7 @@ export default function Dashboard() {
       <input
         type="file"
         onChange={handleFileUpload}
-        className="w-full border border-gray-300 rounded-lg p-2 cursor-pointer hover:border-purple-500 transition text-sm mb-4"
+        className="w-full border border-gray-300 rounded-lg p-2 cursor-pointer hover:border-purple-500 transition text-sm mb-4 text-black"
       />
       {isUploading && (
         <p className="mt-2 text-purple-600 font-medium text-sm">Uploading...</p>
