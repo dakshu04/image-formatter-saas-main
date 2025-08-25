@@ -22,7 +22,7 @@ import {
   Wand2,
   Rocket,
 } from "lucide-react"
-import { motion, Variants, Transition } from "framer-motion"
+import { motion, Variants } from "framer-motion"
 import { useState, useEffect, useCallback } from "react"
 
 const containerVariants: Variants = {
@@ -43,7 +43,7 @@ const itemVariants: Variants = {
     opacity: 1,
     transition: {
       duration: 0.6,
-      ease: "easeOut" as Transition["ease"],
+      ease: "easeOut",
     },
   },
 }
@@ -54,7 +54,7 @@ const floatingVariants: Variants = {
     transition: {
       duration: 6,
       repeat: Infinity,
-      ease: "easeInOut" as Transition["ease"],
+      ease: "easeInOut",
     },
   },
 }
@@ -91,7 +91,7 @@ export default function Home() {
       <motion.div
         className="fixed top-0 left-0 w-6 h-6 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full pointer-events-none z-50 mix-blend-difference"
         animate={{ x: mousePosition.x - 12, y: mousePosition.y - 12 }}
-        transition={{ type: "tween", ease: "backOut" as Transition["ease"], duration: 0.15 }}
+        transition={{ type: "tween", ease: "backOut", duration: 0.15 }}
       />
 
       {/* Background gradients */}
@@ -115,7 +115,7 @@ export default function Home() {
             <Link href="#features" className="text-white/80 hover:text-white">Features</Link>
             <Link href="#pricing" className="text-white/80 hover:text-white">Pricing</Link>
             <Link href={"/sign-in"}>
-            <Button>Sign In</Button>
+              <Button>Sign In</Button>
             </Link>
           </div>
         </div>
@@ -148,8 +148,8 @@ export default function Home() {
             Experience next-level AI tools to edit, enhance, and create stunning visuals effortlessly.
           </motion.p>
           <motion.div variants={itemVariants} className="flex justify-center space-x-4">
-            <Link href={"/sign-up"} className="flex items-center text-white/90 hover:text-white">
-            <Button size="lg">Get Started</Button>
+            <Link href={"/sign-up"}>
+              <Button size="lg">Get Started</Button>
             </Link>
             <Button size="lg" variant="outline">Learn More</Button>
           </motion.div>
