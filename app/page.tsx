@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import HeroSection from "./components/HeroSection"
+import FeaturesSection from "./components/Features"
 
 export const metadata = {
   title: "ImageMagic | AI Image Editing",
@@ -56,6 +57,7 @@ export default function HomePage() {
 
       {/* Hero Section (Client Component for animations) */}
       <HeroSection />
+      <FeaturesSection/>
     </div>
   )
 }
