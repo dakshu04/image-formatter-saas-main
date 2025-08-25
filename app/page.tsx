@@ -45,9 +45,6 @@ export default function HomePage() {
             <Link href="#features" className="text-white/80 hover:text-white">
               Features
             </Link>
-            <Link href="#pricing" className="text-white/80 hover:text-white">
-              Pricing
-            </Link>
             <Link href={"/sign-in"}>
               <Button>Sign In</Button>
             </Link>
