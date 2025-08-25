@@ -60,10 +60,10 @@ export async function POST(request: NextRequest) {
 
     // ✅ Construct transformation URL with only ONE background removal effect
     const bgRemovedUrl = cloudinary.url(result.public_id, {
-      transformation: [
-        { effect: "background_removal" }, // only once!
-        { fetch_format: "png" }, // preserve transparency
-      ],
+       transformation: [
+        { effect: "background_removal" }, 
+        { fetch_format: "png" }
+      ]
     });
 
     return NextResponse.json(
