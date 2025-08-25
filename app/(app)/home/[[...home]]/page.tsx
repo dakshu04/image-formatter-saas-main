@@ -5,6 +5,7 @@ import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { CldImage } from "next-cloudinary"
 import { Home, User } from "lucide-react"
+import { UserButton, UserProfile } from "@clerk/nextjs"
 
 const socialMediaFormats = {
   "Instagram Post": { width: 1080, height: 1080, crop: "fill" },
@@ -67,17 +68,17 @@ export default function HomePage() {
   }
 
   return (
-    <div className="font-sans flex h-screen bg-gray-50">
-      <div className="w-64 bg-white shadow-lg flex flex-col">
+    <div className="font-sans flex h-screen bg-yellow-50">
+      <div className="w-64 bg-gray-700 shadow-lg flex flex-col">
         <div className="p-6 border-b">
-          <h1 className="text-2xl font-bold text-gray-800">🎨 Image Formatter</h1>
+          <h1 className="text-2xl font-bold text-white">🎨 Image Formatter</h1>
         </div>
 
         <nav className="flex-1 p-4">
           <button
             onClick={() => setActiveTab("home")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-colors ${
-              activeTab === "home" ? "bg-purple-100 text-purple-700 font-medium" : "text-gray-600 hover:bg-gray-100"
+            className={`w-full flex items-center gap-3 px-4  py-3 rounded-lg mb-2 transition-colors ${
+              activeTab === "home" ? "bg-purple-100 text-black font-medium" : "text-white hover:bg-gray-100 hover:text-black"
             }`}
           >
             <Home size={20} />
@@ -87,11 +88,11 @@ export default function HomePage() {
           <button
             onClick={() => setActiveTab("profile")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-              activeTab === "profile" ? "bg-purple-100 text-purple-700 font-medium" : "text-gray-600 hover:bg-gray-100"
+              activeTab === "profile" ? "bg-purple-100 text-black font-medium" : "hover:text-black hover:bg-gray-100 t"
             }`}
           >
-            <User size={20} />
-            User Profile
+            <User size={20}/>
+            <UserButton />
           </button>
         </nav>
       </div>
@@ -159,7 +160,7 @@ export default function HomePage() {
                     <CldImage
                         width={socialMediaFormats[selectedFormat].width}
                         height={socialMediaFormats[selectedFormat].height}
-                        crop={socialMediaFormats[selectedFormat].crop}
+                        crop={socialMediaFormats[selectedFormat].crop as "fill" | "crop" | "scale" | "fit" | "pad"}
                         gravity="auto"
                         src={publicId}
                         alt="Uploaded preview"
@@ -182,19 +183,8 @@ export default function HomePage() {
           </div>
         ) : (
           /* Added User Profile tab content */
-          <div className="h-full p-6 flex items-center justify-center">
-            <div className="bg-white shadow-lg rounded-xl p-8 max-w-md w-full">
-              <div className="text-center">
-                <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <User size={40} className="text-purple-600" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">User Profile</h2>
-                <p className="text-gray-600 mb-6">Manage your account settings and preferences</p>
-                <button className="w-full px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                  Edit Profile
-                </button>
-              </div>
-            </div>
+          <div>
+            <UserProfile /> 
           </div>
         )}
       </div>
