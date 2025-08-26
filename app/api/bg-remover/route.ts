@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { clerkClient } from "@clerk/clerk-sdk-node";
+
 // ✅ Cloudinary config
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -25,19 +26,19 @@ export async function POST(request: NextRequest) {
   }
 
   let user = await prisma.user.findUnique({
-    where: { clerkId: userId }, 
+    where: { clerkId: userId },
   });
 
-  if(!user) {
+  if (!user) {
     // ✅ get user details from Clerk
-    const clerkUser = await clerkClient.users.getUser(userId); // 👈 async call
+    const clerkUser = await clerkClient.users.getUser(userId);
     user = await prisma.user.create({
-        data: {
-          clerkId: userId,
-          email: clerkUser.emailAddresses[0]?.emailAddress,
-          name: clerkUser.firstName,
-      }
-    })
+      data: {
+        clerkId: userId,
+        email: clerkUser.emailAddresses[0]?.emailAddress,
+        name: clerkUser.firstName,
+      },
+    });
   }
 
   try {
@@ -52,56 +53,46 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // ✅ Upload original image only (no effects here)
-    const result: CloudinaryUploadResult = await new Promise(
-      (resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            folder: "bg-uploads",
-            resource_type: "image",
-          },
-          (error, result) => {
-            if (error) {
-              reject(error);
-            } else if (result) {
-              resolve(result as CloudinaryUploadResult);
-            } else {
-              reject(new Error("Upload result is null"));
-            }
-          }
-        );
+    // ✅ Upload original image to Cloudinary
+    const result: CloudinaryUploadResult = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: "bg-uploads",
+          resource_type: "image",
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else if (result) resolve(result as CloudinaryUploadResult);
+          else reject(new Error("Upload result is null"));
+        }
+      );
 
-        uploadStream.end(buffer);
-      }
-    );
-
-    // ✅ Construct transformation URL with only ONE background removal effect
-    const bgRemovedUrl = cloudinary.url(result.public_id, {
-       transformation: [
-        { effect: "background_removal" }, 
-        { fetch_format: "png" }
-      ]
+      uploadStream.end(buffer);
     });
 
+    // ✅ Construct transformation URL for background removal
+    const bgRemovedUrl = cloudinary.url(result.public_id, {
+      transformation: [
+        { effect: "background_removal" },
+        { fetch_format: "png" },
+      ],
+    });
+
+    // ✅ Save into Postgres
     const savedImage = await prisma.image.create({
       data: {
         userId: user.id,
         publicId: result.public_id,
         originalUrl: result.secure_url,
-        bgRemovedUrl
-      }
-    })
-
-    return NextResponse.json(
-      {
-        publicId: result.public_id,
-        originalUrl: result.secure_url,
-        bgRemovedUrl, // background removed version
+        bgRemovedUrl,
       },
-      { status: 200 }
-    );
+    });
+
+    console.log("✅ Saved in DB:", savedImage);
+
+    return NextResponse.json(savedImage, { status: 200 });
   } catch (error) {
     console.error("❌ Upload failed:", error);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }

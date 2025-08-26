@@ -1,11 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { createOrGetUser } from "@/lib/createOrGetUser";
 import { prisma } from "@/lib/prisma";
-import { clerkClient } from "@clerk/nextjs/server";
-
-
 
 // ✅ Cloudinary config
 cloudinary.config({
@@ -27,18 +23,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // ✅ Get or create user in Postgres
   let user = await prisma.user.findUnique({
-    where : {
-      clerkId: userId
-    }
-  })
+    where: { clerkId: userId },
+  });
 
-  if(!user) {
+  if (!user) {
     user = await prisma.user.create({
       data: {
         clerkId: userId,
-      }
-    })
+      },
+    });
   }
 
   try {
@@ -59,7 +54,7 @@ export async function POST(request: NextRequest) {
         const uploadStream = cloudinary.uploader.upload_stream(
           {
             folder: "next-cloudinary-uploads",
-            resource_type: "image", // can be auto for video too
+            resource_type: "image",
           },
           (error, result) => {
             if (error) {
@@ -76,16 +71,23 @@ export async function POST(request: NextRequest) {
       }
     );
 
+    // ✅ Save to Postgres
     const savedImage = await prisma.image.create({
-          data: {
-            userId: user.id,
-            publicId: result.public_id,
-            originalUrl: result.secure_url,
-          }
-        })
+      data: {
+        userId: user.id,
+        publicId: result.public_id,
+        originalUrl: result.secure_url,
+      },
+    });
+
+    console.log("✅ Saved in DB:", savedImage);
 
     return NextResponse.json(
-      { publicId: result.public_id, url: result.secure_url },
+      {
+        publicId: result.public_id,
+        url: result.secure_url,
+        dbRecord: savedImage, // return saved DB record too
+      },
       { status: 200 }
     );
   } catch (error) {
