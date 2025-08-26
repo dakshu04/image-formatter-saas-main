@@ -3,7 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-
+import { clerkClient } from "@clerk/clerk-sdk-node";
 // ✅ Cloudinary config
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -29,8 +29,14 @@ export async function POST(request: NextRequest) {
   });
 
   if(!user) {
+    // ✅ get user details from Clerk
+    const clerkUser = await clerkClient.users.getUser(userId); // 👈 async call
     user = await prisma.user.create({
-      data: {clerkId: userId},
+        data: {
+          clerkId: userId,
+          email: clerkUser.emailAddresses[0]?.emailAddress,
+          name: clerkUser.firstName,
+      }
     })
   }
 
