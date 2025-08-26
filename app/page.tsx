@@ -1,38 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import HeroSection from "./components/HeroSection"
 import FeaturesSection from "./components/Features"
-
-export const metadata = {
-  title: "ImageMagic | AI Image Editing",
-  description:
-    "Transform your images with AI-powered editing tools. Enhance, create, and edit visuals like never before with ImageMagic.",
-  openGraph: {
-    title: "ImageMagic | AI Image Editing",
-    description:
-      "AI tools to edit, enhance, and create stunning visuals effortlessly.",
-    url: "https://yourdomain.com",
-    siteName: "ImageMagic",
-    images: [
-      {
-        url: "https://yourdomain.com/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "ImageMagic - AI Image Editing",
-      },
-    ],
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "ImageMagic | AI Image Editing",
-    description:
-      "Edit, enhance, and create stunning visuals with AI-powered tools.",
-    images: ["https://yourdomain.com/og-image.jpg"],
-  },
-}
 
 export default function HomePage() {
   return (

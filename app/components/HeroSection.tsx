@@ -29,7 +29,7 @@ const floatingVariants: Variants = {
 
 export default function HeroSection() {
   const [isVisible, setIsVisible] = useState(false)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [mousePosition, setMousePosition] = useState({ x: 100, y: 100 })
 
   useEffect(() => setIsVisible(true), [])
 

@@ -1,6 +1,11 @@
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { createOrGetUser } from "@/lib/createOrGetUser";
+import { prisma } from "@/lib/prisma";
+import { clerkClient } from "@clerk/nextjs/server";
+
+
 
 // ✅ Cloudinary config
 cloudinary.config({
@@ -20,6 +25,20 @@ export async function POST(request: NextRequest) {
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let user = await prisma.user.findUnique({
+    where : {
+      clerkId: userId
+    }
+  })
+
+  if(!user) {
+    user = await prisma.user.create({
+      data: {
+        clerkId: userId,
+      }
+    })
   }
 
   try {
@@ -56,6 +75,14 @@ export async function POST(request: NextRequest) {
         uploadStream.end(buffer);
       }
     );
+
+    const savedImage = await prisma.image.create({
+          data: {
+            userId: user.id,
+            publicId: result.public_id,
+            originalUrl: result.secure_url,
+          }
+        })
 
     return NextResponse.json(
       { publicId: result.public_id, url: result.secure_url },
